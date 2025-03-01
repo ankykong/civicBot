@@ -2,7 +2,6 @@ import asyncio
 import aiohttp
 import os
 import sys
-import json
 
 from pipecat.audio.vad.silero import SileroVADAnalyzer, VADParams
 from pipecat.frames.frames import LLMMessagesFrame
@@ -10,7 +9,7 @@ from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineParams, PipelineTask
 from pipecat.services.deepgram import DeepgramSTTService, DeepgramTTSService
-from pipecat.services.ollama import OLLamaLLMService
+from langflow_agent import LangFlowAgent
 from pipecat.transports.services.daily import DailyParams, DailyTransport
 from pipecat.processors.aggregators.llm_response import (
     LLMAssistantResponseAggregator,
@@ -62,7 +61,7 @@ async def start_interview_bot():
             api_key=os.getenv("DEEPGRAM_API_KEY")
         )
 
-        llm = OLLamaLLMService(model="llama3.2")
+        llm = LangFlowAgent()
 
         messages = []
 
@@ -83,7 +82,7 @@ async def start_interview_bot():
 
         task = PipelineTask(
             pipeline,
-            PipelineParams(
+            params=PipelineParams(
                 allow_interruptions=True,
                 enable_metrics=True,
                 enable_usage_metrics=True,
@@ -93,10 +92,6 @@ async def start_interview_bot():
 
         @transport.event_handler("on_first_participant_joined")
         async def on_first_participant_joined(transport, participant):
-            participant_name = participant.get("info", {}).get("userName", "")
-            system_prompt = SYSTEM_PROMPT.format(name=participant_name)
-            messages.append({"role": "system", "content": system_prompt})
-            messages.append({"role": "user", "content": "Hello"})
             await task.queue_frames([LLMMessagesFrame(messages)])
 
         @transport.event_handler("on_participant_left")
@@ -106,10 +101,6 @@ async def start_interview_bot():
         runner = PipelineRunner()
 
         await runner.run(task)
-        return json.dumps({
-            "status": 200,
-            "score": 1.0,
-        })
 
 if __name__ == "__main__":
     asyncio.run(start_interview_bot())
