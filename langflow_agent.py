@@ -15,9 +15,6 @@ from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
 from langflow_llm import LangflowLLM
 
 
-logger = logging.getLogger("jinn-pipecat")
-
-
 class LangFlowAgent(FrameProcessor):
     """
     Agent as a Pipecat service.

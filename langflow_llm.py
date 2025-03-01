@@ -11,7 +11,7 @@ except ImportError:
         "Langflow provides a function to help you upload files to the flow. Please install langflow to use it.")
     upload_file = None
 
-BASE_API_URL = "http://127.0.0.1:7861"
+BASE_API_URL = "http://127.0.0.1:7863"
 FLOW_ID = "d8fcb38d-6b7f-495a-af5f-f9f053c866f5"
 ENDPOINT = ""  # You can set a specific endpoint name in the flow settings
 
@@ -38,7 +38,7 @@ TWEAKS = {
 class LangflowLLM:
     def __init__(
         self,
-        base_api_url: str = "http://127.0.0.1:7861",
+        base_api_url: str = "http://127.0.0.1:7863",
         flow_id: str = "d8fcb38d-6b7f-495a-af5f-f9f053c866f5",
         endpoint: str = "",  # You can set a specific endpoint name in the flow settings
         tweaks: Optional[Dict[str, Dict]] = None,
